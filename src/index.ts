@@ -12,8 +12,8 @@ import admin from 'firebase-admin';
 
 let serviceAccount = undefined;
 
-if( process.FKEY != undefined ){
-  serviceAccount = JSON.parse(process.FKEY);
+if( process.env.FKEY != undefined ){
+  serviceAccount = JSON.parse(process.env.FKEY);
 }else{
   serviceAccount = require("../../archimedes-fb-firebase-adminsdk-6lnps-841ff92e05.json");
 }
