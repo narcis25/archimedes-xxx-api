@@ -15,7 +15,8 @@
     "pretest": "npm run compile",
     "posttest": "npm run lint",
     "gcloud:build": "gcloud builds submit --tag asia-northeast3-docker.pkg.dev/techhtml-blog/cloud-run-source-deploy/techhtml-blog",
-    "gcloud:deploy": "gcloud run deploy --image asia-northeast3-docker.pkg.dev/techhtml-blog/cloud-run-source-deploy/techhtml-blog"
+    "gcloud:deploy": "gcloud run deploy --image asia-northeast3-docker.pkg.dev/techhtml-blog/cloud-run-source-deploy/techhtml-blog",
+    "st": "yarn clean && yarn compile && node build/src/index.js"
   },
   "engines": {
     "node": ">=16.0.0"
