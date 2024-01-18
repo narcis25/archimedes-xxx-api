@@ -14,6 +14,8 @@ let serviceAccount = undefined;
 
 //console.log(JSON.stringify(process.env));
 
+console.log(`FKEY = ${process.env.FKEY}`);
+
 if( process.env.FKEY != undefined ){
   serviceAccount = JSON.parse(process.env.FKEY);
   console.log(JSON.stringify(serviceAccount));
