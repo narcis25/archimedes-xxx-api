@@ -6,7 +6,7 @@ import {deleteMessage} from './delete';
 
 export const MessageRouter = express.Router();
 
-MessageRouter.route('/message')
+MessageRouter.route('/items')
   .get(getMessage)
   .post(postMessage)
   .put(updateMessage)

@@ -17,50 +17,51 @@ let serviceAccount = undefined;
 console.log(`FKEY = ${process.env.FKEY}`);
 
 if( process.env.FKEY != undefined ){
-  serviceAccount = JSON.parse(process.env.FKEY);
-  console.log(JSON.stringify(serviceAccount));
+	serviceAccount = JSON.parse(process.env.FKEY);
+	console.log(JSON.stringify(serviceAccount));
 }else{
-  serviceAccount = require("../../archimedes-fb-firebase-adminsdk-6lnps-841ff92e05.json");
+	serviceAccount = require("../../archimedes-fb-firebase-adminsdk-6lnps-841ff92e05.json");
 }
 
 const app = express();
 app.use(
-  cors({
-    credentials: true,
-    origin: function (origin, callback) {
-      if (!origin || ALLOW_ORIGIN.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not Allowed CORS'));
-      }
-    },
-  })
+	cors({
+		credentials: true,
+		origin: function (origin, callback) {
+			if (!origin || ALLOW_ORIGIN.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error('Not Allowed CORS'));
+			}
+		},
+	})
 );
+
 app.use(bodyParser.json());
 app.use(
-  bodyParser.raw({
-    inflate: true,
-    limit: '3mb',
-    type: 'application/octet-stream',
-  })
+	bodyParser.raw({
+		inflate: true,
+		limit: '3mb',
+		type: 'application/octet-stream',
+	})
 );
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(morgan('combined'));
 
 const firebaseConfig = {
-  storageBucket: "archimedes-fb.appspot.com",
-  credential: admin.credential.cert(serviceAccount),
+	storageBucket: "archimedes-fb.appspot.com",
+	credential: admin.credential.cert(serviceAccount),
 };
 
 admin.initializeApp(firebaseConfig);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!!!????');
+	res.send('Hello World!!!????');
 });
 
 app.post('/', (req: Request, res: Response) => {
-  res.send('Hello World!!!????123124151234145');
+	res.send('Hello World!!!????123124151234145');
 });
 
 app.use(MessageRouter);
@@ -70,5 +71,5 @@ app.use(UploadRouter);
 const port = parseInt(`${process.env.PORT}`) || 8080;
 
 app.listen(port, () => {
-  console.log(`helloworld: listening on port ${port}`);
+	console.log(`helloworld: listening on port ${port}`);
 });
