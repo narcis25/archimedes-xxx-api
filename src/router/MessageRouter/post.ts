@@ -30,7 +30,9 @@ export const postMessage = async (req: Request, res: Response) => {
 			const result:any = [];
 			qsnap.forEach(doc=>{
 				//console.log(doc.id, " => ", doc.data());
-				result.push(doc.data());
+				const data = doc.data();
+				data.did = doc.id;
+				result.push( data );
 			});
 			res.status(200).send(JSON.stringify(result));
 		}).catch(error=>{
@@ -57,9 +59,9 @@ export const postMessage = async (req: Request, res: Response) => {
 		// post
 
 		const docRef = firestore().collection('items').doc(params.key).collection('contents');
-
-		await docRef.add(params);
-
+		delete params.key;
+		//await docRef.add(params);
+		await docRef.doc(String(new Date().getTime())).set(params);
 		res.status(200).send({res:'get_OKOK'});
 
 	}
