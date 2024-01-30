@@ -62,8 +62,9 @@ export const postMessage = async (req: Request, res: Response) => {
 
 		async function post(){
 			const docRef = firestore().collection('items').doc(params.key).collection('contents');
-			await docRef.doc(String(new Date().getTime())).set(params.data);
-			res.status(200).send({res:'get_OKOK'});
+			await docRef.doc(String(new Date().getTime())).set(params.data).then(()=>{
+				res.status(200).send({res:'get_OKOK'});
+			});
 		}
 
 		firestore().collection(`items/${params.key}/contents`)
@@ -81,26 +82,6 @@ export const postMessage = async (req: Request, res: Response) => {
 			res.status(400).send(error);
 		});
 	}else if( query == 'switch' ){
-		/*const ords:string[] = [];
-		params.data.tgt.forEach( (el:string)=>{
-			ords.push(el);
-		});
-
-		firestore().collection(`items/${params.key}/contents`)
-		.where("col", "==", `${params.data.type}`)
-		.where("ord", "in", ords)
-		.get()
-		.then((querySnapshot)=>{
-			querySnapshot.forEach(doc=>{
-				const ori_ord:string = doc.data().ord;
-				const result:string[] = ords.filter(item => item !== ori_ord);
-				doc.ref.update({ord:`${result[0]}`});
-				//doc.data().update();
-				//console.log(doc.id, "qqqq => ", doc.data());
-			});
-			res.status(200).send({res:'OKOK'});
-		})*/
-
 		const tgt_ord:number = params.data.tgt[0];
 		const tgt_index:number = params.data.tgt[1];
 
@@ -115,17 +96,31 @@ export const postMessage = async (req: Request, res: Response) => {
 		.get()
 		.then((querySnapshot)=>{
 			let ord:number = 0;
+			let ok_cnt = 0;
+			let size:number = querySnapshot.size;
 			if( tgt_ord < tgt_index ) {
-				console.log('aaa');
-				querySnapshot.forEach(doc=>{
+				querySnapshot.forEach( doc=>{
 					ord = Number(doc.data().ord);
 					if( tgt_ord <= ord && ord <= tgt_index ){
 						if( tgt_ord == ord ){
-							doc.ref.update({ord:`${tgt_index}`});
-							console.log('ttt', ord, ':', tgt_index);
+							doc.ref.update({ord:`${tgt_index}`}).then(()=>{
+								ok_cnt++;
+								if( ok_cnt == size ){
+									res.status(200).send({res:'OKOK'});
+								}
+							});
 						}else if( tgt_index >= ord ){
-							doc.ref.update({ord:`${ord-1}`});
-							console.log('set', ord, ':', ord-1);
+							doc.ref.update({ord:`${ord-1}`}).then(()=>{
+								ok_cnt++;
+								if( ok_cnt == size ){
+									res.status(200).send({res:'OKOK'});
+								}
+							});
+						}
+					}else{
+						ok_cnt++;
+						if( ok_cnt == size ){
+							res.status(200).send({res:'OKOK'});
 						}
 					}
 				});
@@ -134,33 +129,29 @@ export const postMessage = async (req: Request, res: Response) => {
 					ord = Number(doc.data().ord);
 					if( tgt_index <= ord && ord <= tgt_ord ){
 						if( tgt_ord == ord ){
-							doc.ref.update({ord:`${tgt_index}`});
-							console.log('ppp', ord, ':', tgt_index);
+							doc.ref.update({ord:`${tgt_index}`}).then(()=>{
+								ok_cnt++;
+								if( ok_cnt == size ){
+									res.status(200).send({res:'OKOK'});
+								}
+							});
 						}else{
-							doc.ref.update({ord:`${ord+1}`});
-							console.log('pset', ord, ':', ord+1);
+							doc.ref.update({ord:`${ord+1}`}).then(()=>{
+								ok_cnt++;
+								if( ok_cnt == size ){
+									res.status(200).send({res:'OKOK'});
+								}
+							});
+						}
+					}else{
+						ok_cnt++;
+						if( ok_cnt == size ){
+							res.status(200).send({res:'OKOK'});
 						}
 					}
-
-					/*if( tgt_ord == ord ){
-						doc.ref.update({ord:`${tgt_index}`});
-						console.log('ppp', ord, ':', tgt_index);
-					}else if( tgt_index <= ord && tgt_ord <= ord){
-						doc.ref.update({ord:`${ord+1}`});
-						console.log('pset', ord, ':', ord+1);
-					}*/
 				});
 			}
-
-			/*querySnapshot.forEach(doc=>{
-				if( tgt_ord == Number(doc.data().ord) ){
-					doc.ref.update({ord:`${tgt_index}`});
-				}else if( tgt_index >= Number(doc.data().ord) ){
-					doc.ref.update({ord:`${ord+1}`});
-				}
-				ord++;
-			});*/
-			res.status(200).send({res:'OKOK'});
+			
 		});
 	}else if( query == 'arrange'){
 		console.log('arrange!!!');
@@ -170,15 +161,21 @@ export const postMessage = async (req: Request, res: Response) => {
 		.get()
 		.then((querySnapshot)=>{
 			let ord:number = 0;
+			let ok_cnt = 0;
+			let size:number = querySnapshot.size;
 			querySnapshot.forEach(doc=>{
 				console.log('arrange', doc.data());
-				doc.ref.update({ord:`${ord}`});
+				doc.ref.update({ord:`${ord}`}).then(()=>{
+					ok_cnt++;
+					if( ok_cnt == size ){
+						res.status(200).send({res:'OKOK'});
+					}
+				})
 				ord++;
 			});
-			res.status(200).send({res:'OKOK'});
 		});
 	}else if( query == 'edit' ){
-		const ref = firestore().collection(`items/${params.key}/contents`).doc(`${params.did}`);
+		const ref = firestore().collection(`items/${params.key}/contents`).doc(`${params.data.did}`);
 		await ref.set(params.data);
 		res.status(200).send({res:'OKOK'});
 	}
