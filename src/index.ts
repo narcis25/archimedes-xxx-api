@@ -5,7 +5,7 @@ import morgan from 'morgan';
 //import {initializeApp } from 'firebase-admin/app';
 import {MessageRouter} from './router/MessageRouter';
 import {ALLOW_ORIGIN} from './const';
-import {PostRouter, UploadRouter} from './router';
+import {PostRouter, UploadRouter, HistoryRouter} from './router';
 import admin from 'firebase-admin';
 
 //const serviceAccount = require("../../archimedes-fb-firebase-adminsdk-6lnps-841ff92e05.json");
@@ -67,6 +67,7 @@ app.post('/', (req: Request, res: Response) => {
 app.use(MessageRouter);
 app.use(PostRouter);
 app.use(UploadRouter);
+app.use(HistoryRouter);
 
 const port = parseInt(`${process.env.PORT}`) || 8080;
 
